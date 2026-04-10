@@ -4,16 +4,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Users, BarChart3, CheckCircle, ShieldCheck } from 'lucide-react';
 import FeatureShaderCards from '@/components/ui/feature-shader-cards';
-import HeroWave from '@/components/ui/dynamic-wave-canvas-background';
 
 export const HeroSection = () => {
   return (
-    <div className="min-h-screen relative flex flex-col font-sans selection:bg-green-400 selection:text-black overflow-hidden w-full bg-[#020c07]">
-      {/* Animated canvas background */}
-      <div className="absolute inset-0 z-0">
-        <HeroWave />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-      </div>
+    <div className="min-h-screen relative flex flex-col font-sans selection:bg-green-400 selection:text-black overflow-hidden w-full">
       {/* Checkered mesh overlay on top of canvas */}
       <div
         className="absolute inset-0 pointer-events-none z-10"
@@ -143,17 +137,11 @@ export const HeroSection = () => {
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             {/* Card 1 - Joabe Freitas */}
             <motion.div
-              initial={{ rotate: -10 }}
               animate={{ y: [0, -15, 0] }}
-              whileHover={{ rotate: 0, scale: 1.04, y: 0 }}
-              transition={{
-                y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 0.4, ease: "easeOut" },
-                scale: { duration: 0.3 },
-              }}
-              className="absolute bottom-[5%] left-[2%] md:left-[12%] z-30 pointer-events-auto cursor-default"
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-[5%] left-[2%] md:left-[12%] z-30 pointer-events-auto"
             >
-              <div className="w-44 md:w-56 aspect-[3/3.5] bg-neutral-900/95 border border-white/20 rounded-[2rem] p-5 flex flex-col items-center justify-center shadow-2xl">
+              <div className="w-44 md:w-56 aspect-[3/3.5] bg-white/15 backdrop-blur-md border border-white/30 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[-10deg] shadow-2xl hover:rotate-0 transition-transform duration-500">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-full mb-3 shadow-inner border-[3px] border-white/50 overflow-hidden bg-green-600">
                   <img
                     src="/joabe-avatar.webp"
@@ -178,17 +166,11 @@ export const HeroSection = () => {
 
             {/* Card 2 - Nutricionista Cliente (placeholder) */}
             <motion.div
-              initial={{ rotate: 10 }}
               animate={{ y: [0, -20, 0] }}
-              whileHover={{ rotate: 0, scale: 1.04, y: 0 }}
-              transition={{
-                y: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
-                rotate: { duration: 0.4, ease: "easeOut" },
-                scale: { duration: 0.3 },
-              }}
-              className="absolute top-[10%] right-[2%] md:right-[12%] z-30 pointer-events-auto cursor-default"
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute top-[10%] right-[2%] md:right-[12%] z-30 pointer-events-auto"
             >
-              <div className="w-44 md:w-56 aspect-[3/3.5] bg-neutral-900/95 border border-white/20 rounded-[2rem] p-5 flex flex-col items-center justify-center shadow-2xl">
+              <div className="w-44 md:w-56 aspect-[3/3.5] bg-white/15 backdrop-blur-md border border-white/30 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[10deg] shadow-2xl hover:rotate-0 transition-transform duration-500">
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center mb-3 shadow-inner border-[3px] border-white/50 overflow-hidden">
                   {/* Placeholder for nutritionist client photo */}
                   <div className="w-full h-full bg-gradient-to-br from-slate-300 to-slate-600 flex items-center justify-center">
@@ -209,21 +191,16 @@ export const HeroSection = () => {
             {/* Metric floating badge */}
             <motion.div
               animate={{ y: [0, -10, 0], rotate: [12, 10, 12] }}
-              whileHover={{ rotate: 0, scale: 1.06, y: 0 }}
-              transition={{
-                y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
-                rotate: { duration: 0.4, ease: "easeOut" },
-                scale: { duration: 0.3 },
-              }}
-              className="absolute bottom-[-14%] right-[1%] md:right-[12%] z-40 pointer-events-auto cursor-default"
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute bottom-[-14%] right-[1%] md:right-[12%] z-40 pointer-events-auto"
             >
-              <div className="bg-neutral-900/95 text-white rounded-2xl px-5 py-4 shadow-xl border border-white/15">
+              <div className="bg-white/10 backdrop-blur-md text-white rounded-2xl px-5 py-4 shadow-xl border border-white/20">
                 <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="w-4 h-4 text-green-400 flex-shrink-0" />
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-green-300">Marketing que já provou resultado</p>
+                  <ShieldCheck className="w-4 h-4 text-green-400 flex-shrink-0" />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-green-300">Membro certificado</p>
                 </div>
-                <p className="text-sm font-black text-white leading-tight">Estratégia comprovada</p>
-                <p className="text-[9px] font-medium text-white/70 mt-0.5">Tráfego · Social Media · Funil</p>
+                <p className="text-sm font-black text-white leading-tight">Década Milionária</p>
+                <p className="text-[9px] font-medium text-white/70 mt-0.5">Pedro Sobral + 9 mentores</p>
               </div>
             </motion.div>
 
