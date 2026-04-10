@@ -82,8 +82,17 @@ function PricingCard({ plan, index }: { plan: typeof plans[0]; index: number }) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.15 }}
-      className="h-full"
+      className="relative h-full"
     >
+      {/* Badge — outside overflow-hidden card */}
+      {plan.popular && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
+          <span className="bg-green-400 text-black text-xs font-black px-5 py-2 rounded-full uppercase tracking-wider shadow-lg whitespace-nowrap">
+            Mais Completo
+          </span>
+        </div>
+      )}
+
       <div
         ref={divRef}
         onMouseMove={handleMouseMove}
@@ -117,14 +126,6 @@ function PricingCard({ plan, index }: { plan: typeof plans[0]; index: number }) 
 
         {/* Content */}
         <div className="relative z-[2] flex flex-col h-full">
-          {plan.popular && (
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-              <span className="bg-green-400 text-black text-xs font-black px-5 py-2 rounded-full uppercase tracking-wider shadow-lg">
-                Mais Completo
-              </span>
-            </div>
-          )}
-
           <div className="text-left pt-8 px-6 pb-4">
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -197,7 +198,7 @@ function PricingCard({ plan, index }: { plan: typeof plans[0]; index: number }) 
 
 export default function PricingSection() {
   return (
-    <section id="planos" className="min-h-screen mx-auto relative bg-black overflow-x-hidden py-24 px-4">
+    <section id="planos" className="mx-auto relative bg-black overflow-x-hidden pt-8 pb-24 px-4">
       {/* Background grid */}
       <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:60px_60px]"></div>
 
