@@ -45,43 +45,31 @@ const HighlightCard: FC<ComponentProps> = ({ title, description, icon, theme = "
     );
   }
 
-  // Dark theme (original)
+  // Dark theme
   return (
-    <div className="group cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-rotate-1">
-      <Card className="text-white rounded-2xl border border-white/10 bg-gradient-to-br from-[#010101] via-[#090909] to-[#010101] shadow-2xl relative overflow-hidden hover:border-white/25 w-full">
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-white/10 opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
-          <div className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-gradient-to-tr from-[#003631]/20 to-transparent blur-3xl opacity-30 group-hover:opacity-60 transform group-hover:scale-110 transition-all duration-700"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
-        </div>
-
-        <div className="p-8 relative z-10 flex flex-col items-center text-center">
-          <div className="relative mb-6">
-            <div className="absolute inset-0 rounded-full border-2 border-[#00C4A7]/20 animate-ping"></div>
-            <div className="p-6 rounded-full border border-white/20 bg-gradient-to-br from-black/80 to-black/60 shadow-2xl transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-500">
-              <div className="transform group-hover:rotate-180 transition-transform duration-700">
-                {icon}
-              </div>
+    <div className="group cursor-pointer">
+      <Card className="text-white rounded-2xl border border-white/10 bg-[#0a1614] relative overflow-hidden hover:border-[#00C4A7]/30 transition-colors duration-300 w-full">
+        <div className="p-8 flex flex-col items-center text-center">
+          <div className="mb-6">
+            <div className="p-5 rounded-full border border-white/15 bg-black/40 group-hover:border-[#00C4A7]/30 group-hover:scale-110 transition-all duration-300">
+              {icon}
             </div>
           </div>
 
-          <h3 className="mb-4 text-2xl font-bold font-playfair text-[#ffeda8] transform group-hover:scale-105 transition-transform duration-300">
+          <h3 className="mb-4 text-2xl font-bold font-playfair text-[#ffeda8]">
             {title}
           </h3>
 
           <div className="space-y-1 max-w-sm">
             {description.map((line, idx) => (
-              <p key={idx} className="text-gray-300 text-sm leading-relaxed font-jakarta group-hover:text-gray-200 transition-colors duration-300">
+              <p key={idx} className="text-gray-300 text-sm leading-relaxed font-jakarta">
                 {line}
               </p>
             ))}
           </div>
 
-          <div className="mt-6 w-1/3 h-0.5 bg-gradient-to-r from-transparent via-[#ffeda8]/60 to-transparent rounded-full transform group-hover:w-1/2 transition-all duration-500"></div>
+          <div className="mt-6 w-8 h-0.5 bg-[#ffeda8]/40 rounded-full group-hover:w-16 transition-all duration-300" />
         </div>
-
-        <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-[#003631]/20 to-transparent rounded-br-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-[#00C4A7]/10 to-transparent rounded-tl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </Card>
     </div>
   );

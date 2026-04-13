@@ -44,8 +44,7 @@ const HolographicCard = ({ children, className = '' }: HolographicCardProps) => 
         className="absolute inset-0 rounded-2xl pointer-events-none z-20 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(circle at ${glowPos.x}% ${glowPos.y}%, rgba(201,185,122,0.25) 0%, rgba(255,215,100,0.08) 40%, transparent 70%)`,
-          mixBlendMode: 'screen',
+          background: `radial-gradient(circle at ${glowPos.x}% ${glowPos.y}%, rgba(201,185,122,0.18) 0%, rgba(255,215,100,0.06) 40%, transparent 70%)`,
         }}
       />
       {children}

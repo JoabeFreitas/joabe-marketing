@@ -523,7 +523,7 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
                 className="mt-16 flex flex-wrap items-center justify-center lg:justify-start gap-6 sm:gap-8"
               >
                 {[
@@ -630,7 +630,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
+                transition={{ duration: 0.4, delay: i * 0.07 }}
               >
                 <HighlightCard
                   title={item.title}
@@ -765,7 +765,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
+                transition={{ duration: 0.4, delay: i * 0.07 }}
                 className="group relative p-8 rounded-2xl border border-white/8 bg-[#001F1C]/60 hover:border-[#00C4A7]/30 hover:bg-[#001F1C]/80 transition-all duration-300"
               >
                 <div className="absolute top-6 right-6 font-playfair text-5xl font-black text-white/5 group-hover:text-[#003631]/40 transition-colors duration-300 select-none leading-none">
@@ -829,7 +829,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
               >
                 <HighlightCard
                   title={s.title}
@@ -909,7 +909,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.2 }}
             className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-5"
           >
             {[
@@ -928,7 +928,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.7 }}
+            transition={{ delay: 0.3 }}
             className="text-center text-[#ffeda8]/30 text-xs italic mt-8 font-jakarta"
           >
             Planilha disponível para quem quiser verificar cada venda atribuída.
@@ -978,7 +978,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="rounded-xl border border-white/15 overflow-hidden bg-white/5 backdrop-blur-sm"
+                className="rounded-xl border border-white/12 overflow-hidden bg-white/6"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
