@@ -448,7 +448,7 @@ export default function Home() {
             name="Joabe Freitas"
             role="Estrategista Digital | Ecossistemas de Vendas B2B"
             bio="Fui formado para entender marketing como ciência, não arte. Cada projeto que assumo começa com análise de dados e termina com lucro mensurável. Não vendo presença digital. Construo sistemas que geram receita previsível. Especializado em arquitetar ecossistemas completos: tráfego pago, funis de conversão, CRM e dashboards integrados. Meu critério de sucesso é simples: crescimento real no seu faturamento."
-            imageUrl="/joabe-marketing/joabe-avatar.webp"
+            imageUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/joabe-avatar.webp`}
             tags={["Tráfego Pago", "Funis de Vendas", "CRM", "Dashboards", "Meta Ads", "Google Ads", "Social Media"]}
             socials={profileSocials}
           />
