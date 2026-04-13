@@ -5,19 +5,24 @@ import "./globals.css";
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["700", "900"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Joabe Freitas | Estrategista Digital — Ecossistemas de Vendas",
   description: "Construo ecossistemas completos de vendas B2B: tráfego pago, funis, CRM e dashboards. Resultado previsível, não sorte.",
+  other: {
+    viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
+  },
 };
 
 export default function RootLayout({

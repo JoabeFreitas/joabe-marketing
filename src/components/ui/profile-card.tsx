@@ -1,6 +1,7 @@
 "use client";
 
-import { FC } from "react";
+import { FC, RefObject } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 // Brand SVG icons
@@ -35,6 +36,8 @@ interface ProfileCardProps {
   imageUrl: string;
   tags?: string[];
   socials?: SocialLink[];
+  imageRef?: RefObject<HTMLDivElement>;
+  hideImage?: boolean;
 }
 
 const ProfileCard: FC<ProfileCardProps> = ({
@@ -44,6 +47,8 @@ const ProfileCard: FC<ProfileCardProps> = ({
   imageUrl,
   tags = [],
   socials = [],
+  imageRef,
+  hideImage = false,
 }) => {
   return (
     <motion.div
@@ -54,13 +59,16 @@ const ProfileCard: FC<ProfileCardProps> = ({
       className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center lg:items-start"
     >
       {/* Photo block */}
-      <div className="relative flex-shrink-0">
+      <div ref={imageRef} className="relative flex-shrink-0" style={{ opacity: hideImage ? 0 : 1, transition: "opacity 0.3s ease" }}>
         <div className="relative w-56 h-64 sm:w-72 sm:h-80 rounded-2xl overflow-hidden shadow-2xl">
-          <img
+          <Image
             src={imageUrl}
             alt={name}
-            className="w-full h-full object-cover"
-            style={{ objectPosition: "50% 0%" }}
+            fill
+            className="object-cover"
+            style={{ objectPosition: "50% 0%", transform: "scale(1.15) translateY(-6%)" }}
+            sizes="(max-width: 640px) 224px, 288px"
+            priority={false}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#001F1C]/30 via-transparent to-transparent" />
         </div>

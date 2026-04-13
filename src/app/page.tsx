@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useMotionValue } from "framer-motion";
+import FloatingAvatar from "@/components/ui/floating-avatar";
 import HeroWave from "@/components/ui/dynamic-wave-canvas-background";
 import HighlightCard from "@/components/ui/highlight-card";
 import HolographicCard from "@/components/ui/holographic-card";
@@ -223,6 +224,104 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ── Elliptical scroll animation ────────────────────────────────────────────
+  const heroImageSlotRef = useRef<HTMLDivElement>(null);
+  const sobreImageRef = useRef<HTMLDivElement>(null);
+  const [showFloat, setShowFloat] = useState(false);
+  const [hideProfileImage, setHideProfileImage] = useState(false);
+
+  // imgBounds stores ABSOLUTE page positions so the math is correct at any scroll offset
+  const imgBounds = useRef({
+    startAbsX: 0, startAbsY: 0,  // absolute page position of hero image slot
+    endAbsX: 0, endAbsY: 0,      // absolute page position of sobre image slot
+    scrollEnd: 800,               // scroll offset at which the image should land
+  });
+
+  const floatLeft = useMotionValue(0);
+  const floatTop = useMotionValue(0);
+  const floatOpacity = useMotionValue(1);
+  const { scrollY } = useScroll();
+
+  // We use a ref so the scroll listener always reads latest bounds without re-subscribing
+  const computePos = useRef((scrollTop: number) => {
+    const b = imgBounds.current;
+    const p = Math.min(1, Math.max(0, scrollTop / b.scrollEnd));
+    const ep = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+    const arc = Math.sin(p * Math.PI);
+    // X doesn't change with scroll (horizontal scroll = 0), safe to use absolute
+    floatLeft.set(b.startAbsX + (b.endAbsX - b.startAbsX) * ep + 80 * arc);
+    // Y: convert absolute → viewport by subtracting current scrollTop
+    const absY = b.startAbsY + (b.endAbsY - b.startAbsY) * ep - 110 * arc;
+    floatTop.set(absY - scrollTop);
+    // Fade out at the end as the float lands on the Sobre slot
+    floatOpacity.set(p >= 0.85 ? Math.max(0, 1 - (p - 0.85) / 0.15) : 1);
+  });
+
+  useEffect(() => {
+    // Refresh ref on every render so it captures latest motion values
+    computePos.current = (scrollTop: number) => {
+      const b = imgBounds.current;
+      const p = Math.min(1, Math.max(0, scrollTop / b.scrollEnd));
+      const ep = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      const arc = Math.sin(p * Math.PI);
+      floatLeft.set(b.startAbsX + (b.endAbsX - b.startAbsX) * ep + 80 * arc);
+      const absY = b.startAbsY + (b.endAbsY - b.startAbsY) * ep - 110 * arc;
+      floatTop.set(absY - scrollTop);
+      // Fade out at the end as the float lands on the Sobre slot
+    floatOpacity.set(p >= 0.85 ? Math.max(0, 1 - (p - 0.85) / 0.15) : 1);
+    };
+  });
+
+  useEffect(() => {
+    function measure() {
+      if (window.innerWidth < 1024) return;
+      const hSlot = heroImageSlotRef.current;
+      const sSlot = sobreImageRef.current;
+      if (!hSlot || !sSlot) return;
+
+      const scrollTop = window.scrollY;
+      const hRect = hSlot.getBoundingClientRect();
+      const sRect = sSlot.getBoundingClientRect();
+
+      // Convert viewport rects → absolute page positions
+      const hAbsY = hRect.top + scrollTop;
+      const sAbsY = sRect.top + scrollTop;
+
+      imgBounds.current = {
+        startAbsX: hRect.left,   // X is viewport-stable (no horizontal scroll)
+        startAbsY: hAbsY,
+        endAbsX: sRect.left,
+        endAbsY: sAbsY,
+        // Land when the sobre slot reaches the same viewport Y as the hero slot was at scroll=0
+        scrollEnd: Math.max(300, sAbsY - hAbsY),
+      };
+
+      computePos.current(scrollTop);
+      setShowFloat(true);
+      const p0 = Math.min(1, Math.max(0, scrollTop / imgBounds.current.scrollEnd));
+      setHideProfileImage(p0 < 1);
+    }
+
+    const raf = requestAnimationFrame(measure);
+    const timer = setTimeout(measure, 300);
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsub = scrollY.on("change", (v) => {
+      if (window.innerWidth < 1024) return;
+      computePos.current(v);
+      const p = Math.min(1, Math.max(0, v / imgBounds.current.scrollEnd));
+      setHideProfileImage(p < 0.98);
+    });
+    return unsub;
+  }, [scrollY]);
+
   return (
     <main className="relative">
 
@@ -230,7 +329,7 @@ export default function Home() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#001F1C]/95 backdrop-blur-sm border-b border-white/8 shadow-lg"
+            ? "bg-[#001F1C]/95 md:backdrop-blur-sm border-b border-white/8 shadow-lg"
             : "bg-transparent"
         }`}
       >
@@ -310,6 +409,16 @@ export default function Home() {
         </AnimatePresence>
       </header>
 
+      {/* ── Floating profile image (scroll elliptical animation) ── */}
+      {showFloat && (
+        <FloatingAvatar
+          imageUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/joabe-avatar.webp`}
+          floatLeft={floatLeft}
+          floatTop={floatTop}
+          floatOpacity={floatOpacity}
+        />
+      )}
+
       {/* ── Floating WhatsApp Button ──────────────────── */}
       <motion.a
         href="https://wa.me/5585920017206?text=Ol%C3%A1%20Joabe%2C%20quero%20agendar%20uma%20consultoria%20estrat%C3%A9gica"
@@ -349,81 +458,95 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4A7]/30 bg-[#00C4A7]/10 text-[#00C4A7] text-xs font-bold tracking-widest uppercase font-jakarta mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C4A7] animate-pulse" />
-              Marketing Digital que já mostrou resultado
-            </span>
-          </motion.div>
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
+          <div className="flex items-center gap-12 lg:gap-16">
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="font-playfair text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.1] mb-6"
-          >
-            Sua empresa merece uma{" "}
-            <span className="mark-d">máquina de vendas</span>,{" "}
-            não apostas de marketing
-          </motion.h1>
+            {/* Text column */}
+            <div className="flex-1 text-center lg:text-left">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+              >
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4A7]/30 bg-[#00C4A7]/10 text-[#00C4A7] text-xs font-bold tracking-widest uppercase font-jakarta mb-8">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00C4A7] animate-pulse" />
+                  Marketing Digital que já mostrou resultado
+                </span>
+              </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-jakarta text-base sm:text-lg text-white/65 max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            Construo ecossistemas completos que convertem: do anúncio ao fechamento.
-            Tráfego, funil, CRM e dashboards integrados.{" "}
-            <span className="mark-r">Resultado previsível</span>, não sorte.
-          </motion.p>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.15 }}
+                className="font-playfair text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.1] mb-6"
+              >
+                Sua empresa merece uma{" "}
+                <span className="mark-d">máquina de vendas</span>,{" "}
+                não apostas de marketing
+              </motion.h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <a
-              href="https://wa.me/5585920017206?text=Ol%C3%A1%20Joabe%2C%20quero%20agendar%20uma%20consultoria%20estrat%C3%A9gica"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#ffeda8] text-[#001F1C] font-bold text-base font-jakarta hover:bg-white transition-colors shadow-xl shadow-[#ffeda8]/20"
-            >
-              <Calendar className="w-5 h-5" />
-              Agendar Consultoria Gratuita
-            </a>
-            <a
-              href="#metodo"
-              className="inline-flex items-center gap-2 px-6 py-4 rounded-full border border-white/20 text-white/80 font-semibold text-base font-jakarta hover:border-white/40 hover:text-white transition-all"
-            >
-              Ver Metodologia
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="font-jakarta text-base sm:text-lg text-white/65 max-w-2xl mb-10 leading-relaxed"
+              >
+                Construo ecossistemas completos que convertem: do anúncio ao fechamento.
+                Tráfego, funil, CRM e dashboards integrados.{" "}
+                <span className="mark-r">Resultado previsível</span>, não sorte.
+              </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-16 flex flex-wrap items-center justify-center gap-6 sm:gap-8"
-          >
-            {[
-              { icon: GraduationCap, text: "Graduando em Marketing · UNIFOR" },
-              { icon: BarChart2, text: "Meta + Google Ads Certificado" },
-              { icon: CheckCircle, text: "Case B2B Documentado" },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-white/40 text-xs font-jakarta">
-                <Icon className="w-3.5 h-3.5 text-[#00C4A7]" />
-                {text}
-              </div>
-            ))}
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
+              >
+                <a
+                  href="https://wa.me/5585920017206?text=Ol%C3%A1%20Joabe%2C%20quero%20agendar%20uma%20consultoria%20estrat%C3%A9gica"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#ffeda8] text-[#001F1C] font-bold text-base font-jakarta hover:bg-white transition-colors shadow-xl shadow-[#ffeda8]/20"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Agendar Consultoria Gratuita
+                </a>
+                <a
+                  href="#metodo"
+                  className="inline-flex items-center gap-2 px-6 py-4 rounded-full border border-white/20 text-white/80 font-semibold text-base font-jakarta hover:border-white/40 hover:text-white transition-all"
+                >
+                  Ver Metodologia
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="mt-16 flex flex-wrap items-center justify-center lg:justify-start gap-6 sm:gap-8"
+              >
+                {[
+                  { icon: GraduationCap, text: "Graduando em Marketing · UNIFOR" },
+                  { icon: BarChart2, text: "Meta + Google Ads Certificado" },
+                  { icon: CheckCircle, text: "Case B2B Documentado" },
+                ].map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-center gap-2 text-white/40 text-xs font-jakarta">
+                    <Icon className="w-3.5 h-3.5 text-[#00C4A7]" />
+                    {text}
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Image slot (desktop only) — the floating image will be positioned here */}
+            <div
+              ref={heroImageSlotRef}
+              className="hidden lg:block w-72 h-80 flex-shrink-0"
+              aria-hidden="true"
+            />
+
+          </div>
         </div>
       </section>
 
@@ -451,6 +574,8 @@ export default function Home() {
             imageUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/joabe-avatar.webp`}
             tags={["Tráfego Pago", "Funis de Vendas", "CRM", "Dashboards", "Meta Ads", "Google Ads", "Social Media"]}
             socials={profileSocials}
+            imageRef={sobreImageRef}
+            hideImage={hideProfileImage}
           />
 
           <motion.div

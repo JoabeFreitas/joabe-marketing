@@ -5,6 +5,11 @@ const HeroWave = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Skip canvas on mobile — saves CPU and battery
+    if (window.innerWidth < 768) return;
+    // Skip for users who prefer reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -14,7 +19,10 @@ const HeroWave = () => {
     let imageData: ImageData;
     let data: Uint8ClampedArray;
     const SCALE = 2;
+    const FRAME_MS = 1000 / 60;
+    let lastFrame = 0;
     let animationId: number;
+    let paused = false;
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -25,7 +33,13 @@ const HeroWave = () => {
       data = imageData.data;
     };
 
+    const onVisibility = () => {
+      paused = document.hidden;
+      if (!paused) animationId = requestAnimationFrame(render);
+    };
+
     window.addEventListener('resize', resizeCanvas);
+    document.addEventListener('visibilitychange', onVisibility);
     resizeCanvas();
 
     const startTime = Date.now();
@@ -48,7 +62,13 @@ const HeroWave = () => {
       return COS_TABLE[Math.abs(index)];
     };
 
-    const render = () => {
+    const render = (timestamp = 0) => {
+      if (paused) return;
+      if (timestamp - lastFrame < FRAME_MS) {
+        animationId = requestAnimationFrame(render);
+        return;
+      }
+      lastFrame = timestamp;
       const time = (Date.now() - startTime) * 0.001;
 
       for (let y = 0; y < height; y++) {
@@ -95,11 +115,12 @@ const HeroWave = () => {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      document.removeEventListener('visibilitychange', onVisibility);
       cancelAnimationFrame(animationId);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full hidden md:block" />;
 };
 
 export default HeroWave;
