@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -17,6 +17,21 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Joabe Freitas | Estrategista Digital — Ecossistemas de Vendas",
   description: "Construo ecossistemas completos de vendas B2B: tráfego pago, funis, CRM e dashboards. Resultado previsível, não sorte.",
@@ -31,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${playfair.variable} ${jakarta.variable} ${instrumentSerif.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-jakarta">{children}</body>
     </html>
   );

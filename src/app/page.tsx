@@ -227,52 +227,57 @@ export default function Home() {
   return (
     <main className="relative">
 
-      {/* ── Sticky Navbar ────────────────────────────── */}
+      {/* ── Sticky Navbar (appears when scrolled past hero) ─────────────── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-[#001F1C]/95 md:backdrop-blur-sm border-b border-white/8 shadow-lg"
-            : "bg-transparent"
+            ? "liquid-glass border-b border-white/8 shadow-lg translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0 pointer-events-none"
         }`}
       >
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <a
             href="#"
-            className="font-playfair text-xl font-bold text-[#ffeda8] tracking-tight select-none"
+            className="text-2xl tracking-tight text-white select-none"
+            style={{ fontFamily: "var(--font-display, 'Instrument Serif', serif)" }}
           >
-            JF
+            JF<sup className="text-xs align-super ml-0.5">®</sup>
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="px-4 py-2 rounded-lg text-white/60 text-sm font-jakarta font-medium hover:text-white hover:bg-white/8 transition-all duration-200"
+                className="text-sm text-white/55 hover:text-white transition-colors duration-150 font-body"
+                style={{ fontFamily: "var(--font-body, 'Inter', sans-serif)" }}
               >
                 {link.label}
               </a>
             ))}
+          </nav>
+
+          {/* CTA + Mobile hamburger */}
+          <div className="flex items-center gap-3">
             <a
               href="https://wa.me/5585920017206?text=Ol%C3%A1%20Joabe%2C%20quero%20agendar%20uma%20consultoria%20estrat%C3%A9gica"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-3 px-4 py-2 rounded-lg bg-[#ffeda8] text-[#001F1C] text-sm font-jakarta font-bold hover:bg-white transition-colors"
+              className="liquid-glass hidden md:inline-flex rounded-full px-5 py-2 text-sm text-white hover:scale-[1.03] transition-transform duration-150"
+              style={{ fontFamily: "var(--font-body, 'Inter', sans-serif)" }}
             >
               Consultoria
             </a>
-          </nav>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-white/15 text-white hover:bg-white/8 transition-colors"
-            aria-label="Menu"
-          >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded-full liquid-glass text-white"
+              aria-label="Menu"
+            >
+              {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile dropdown */}
@@ -283,15 +288,17 @@ export default function Home() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
-              className="md:hidden bg-[#001F1C]/98 border-b border-white/8 overflow-hidden"
+              className="md:hidden border-t border-white/8 overflow-hidden"
+              style={{ background: "rgba(0,21,40,0.92)", backdropFilter: "blur(12px)" }}
             >
-              <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+              <div className="max-w-7xl mx-auto px-8 py-4 flex flex-col gap-1">
                 {navLinks.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className="px-4 py-3 rounded-lg text-white/70 font-jakarta font-medium hover:text-white hover:bg-white/8 transition-all"
+                    className="px-4 py-3 rounded-xl text-white/60 text-sm hover:text-white hover:bg-white/5 transition-all font-body"
+                    style={{ fontFamily: "var(--font-body, 'Inter', sans-serif)" }}
                   >
                     {link.label}
                   </a>
@@ -301,7 +308,8 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className="mt-2 px-4 py-3 rounded-lg bg-[#ffeda8] text-[#001F1C] font-jakarta font-bold text-center hover:bg-white transition-colors"
+                  className="mt-2 px-4 py-3 liquid-glass rounded-full text-white text-sm text-center font-body"
+                  style={{ fontFamily: "var(--font-body, 'Inter', sans-serif)" }}
                 >
                   Agendar Consultoria Gratuita
                 </a>
